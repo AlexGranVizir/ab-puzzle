@@ -1,0 +1,110 @@
+.grid-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.grid-info {
+  text-align: center;
+}
+
+.grid-info h2 {
+  margin: 0 0 10px 0;
+  color: #333;
+  font-size: 24px;
+}
+
+.grid-info p {
+  margin: 0 0 15px 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.grid-stats {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.stat {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 12px;
+  background: #f5f5f5;
+  border-radius: 4px;
+}
+
+.stat .label {
+  color: #666;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.stat .value {
+  color: #333;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.stat.complete {
+  background: #c8e6c9;
+  color: #2e7d32;
+}
+
+.stat.complete .label {
+  color: #2e7d32;
+  font-size: 16px;
+}
+
+.grids-wrapper,
+.grid-panel,
+.grid-label,
+.target-canvas {
+  display: none; /* removed — no fixed target */
+}
+
+.canvas-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.grid-canvas {
+  border: 2px solid #ddd;
+  cursor: pointer;
+  background: white;
+  border-radius: 4px;
+  transition: border-color 0.2s;
+}
+
+.grid-canvas:hover {
+  border-color: #4CAF50;
+}
+
+.next-button {
+  margin-top: 15px;
+  padding: 12px 28px;
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.next-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.35);
+}
+
+.next-button:active {
+  transform: translateY(0);
+}
+

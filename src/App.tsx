@@ -1,24 +1,33 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useState } from 'react';
+import { PuzzleFlow } from './components/PuzzleFlow';
+import { PuzzleDesigner } from './components/PuzzleDesigner';
 import './App.css';
 
+const DESIGNER_ENABLED = process.env.REACT_APP_DESIGNER === 'true';
+
 function App() {
+  const [mode, setMode] = useState<'play' | 'design'>('play');
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+      <header className="app-header">
+        <h1>Grid Symmetry Puzzles</h1>
+        <p>Solve 5 puzzles using as few clicks as possible</p>
+        {DESIGNER_ENABLED && (
+          <button
+            className="mode-toggle"
+            onClick={() => setMode(m => m === 'play' ? 'design' : 'play')}
+          >
+            {mode === 'play' ? '✏️ Designer' : '▶ Play'}
+          </button>
+        )}
       </header>
+      <main className="app-main">
+        {mode === 'play' || !DESIGNER_ENABLED ? <PuzzleFlow /> : <PuzzleDesigner />}
+      </main>
+      <footer className="app-footer">
+        <p>Grid Symmetry Puzzles</p>
+      </footer>
     </div>
   );
 }
