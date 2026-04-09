@@ -8,9 +8,7 @@ interface GridProps {
   onComplete: (result: {
     clicks: number;
     timeTaken: number;
-    clickHistory: GridClick[];
-    finalState: GridState;
-    strategy: 'additive' | 'subtractive' | 'mixed';
+    strategy: 'pure additive' | 'additive' | 'subtractive' | 'pure subtractive';
     efficiency: number;
   }) => void;
 }
@@ -85,9 +83,9 @@ export const Grid: React.FC<GridProps> = ({ puzzle, onComplete }) => {
 
   const handleNext = () => {
     const timeTaken = Date.now() - startTime;
-    const strategy = inferStrategy(puzzle.initialState, clickHistory, gridState);
+    const strategy = inferStrategy(puzzle.initialState, clickHistory);
     const efficiency = calculateEfficiency(puzzle.optimalClicks, clicks);
-    onComplete({ clicks, timeTaken, clickHistory, finalState: gridState, strategy, efficiency });
+    onComplete({ clicks, timeTaken, strategy, efficiency });
   };
 
   const canvasSize = GRID_PADDING * 2 + GRID_SIZE * CELL_SIZE;

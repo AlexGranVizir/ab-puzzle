@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { puzzles } from '../data/puzzles';
 import { PuzzleResult, SessionResults } from '../types/index';
 import { Grid } from './Grid';
@@ -9,7 +9,7 @@ export const PuzzleFlow: React.FC = () => {
   const [currentPuzzleIndex, setCurrentPuzzleIndex] = useState(0);
   const [results, setResults] = useState<PuzzleResult[]>([]);
   const [sessionStartTime] = useState(Date.now());
-  const [isComplete, setIsComplete] = useState(false);
+  const [sessionResults, setSessionResults] = useState<SessionResults | null>(null);
 
   const currentPuzzle = puzzles[currentPuzzleIndex];
   const progress = ((currentPuzzleIndex + 1) / puzzles.length) * 100;
@@ -17,9 +17,7 @@ export const PuzzleFlow: React.FC = () => {
   const handlePuzzleComplete = (puzzleResult: {
     clicks: number;
     timeTaken: number;
-    clickHistory: any[];
-    finalState: any;
-    strategy: 'additive' | 'subtractive' | 'mixed';
+    strategy: 'pure additive' | 'additive' | 'subtractive' | 'pure subtractive';
     efficiency: number;
   }) => {
     const result: PuzzleResult = {
@@ -27,8 +25,6 @@ export const PuzzleFlow: React.FC = () => {
       clicks: puzzleResult.clicks,
       optimalClicks: currentPuzzle.optimalClicks,
       timeTaken: puzzleResult.timeTaken,
-      finalState: puzzleResult.finalState,
-      clickHistory: puzzleResult.clickHistory,
       strategy: puzzleResult.strategy,
       efficiency: puzzleResult.efficiency,
     };
@@ -36,35 +32,41 @@ export const PuzzleFlow: React.FC = () => {
     const newResults = [...results, result];
     setResults(newResults);
 
-    // Move to next puzzle or show summary
     if (currentPuzzleIndex < puzzles.length - 1) {
       setCurrentPuzzleIndex(currentPuzzleIndex + 1);
     } else {
-      setIsComplete(true);
+      const endTime = Date.now();
+      setSessionResults({
+        sessionId: `session-${endTime}`,
+        puzzles: newResults,
+        totalClicks: newResults.reduce((sum, r) => sum + r.clicks, 0),
+        totalTime: endTime - sessionStartTime,
+        averageEfficiency:
+          Math.round(newResults.reduce((sum, r) => sum + r.efficiency, 0) / newResults.length) || 0,
+        startTime: sessionStartTime,
+        endTime,
+      });
     }
   };
 
-  if (isComplete) {
-    const sessionResults: SessionResults = {
-      sessionId: `session-${Date.now()}`,
-      puzzles: results,
-      totalClicks: results.reduce((sum, r) => sum + r.clicks, 0),
-      totalTime: Date.now() - sessionStartTime,
-      averageEfficiency:
-        Math.round(
-          results.reduce((sum, r) => sum + r.efficiency, 0) / results.length
-        ) || 0,
-      startTime: sessionStartTime,
-      endTime: Date.now(),
-    };
+  // Fire-and-forget submission — runs exactly once when sessionResults is set
+  useEffect(() => {
+    if (!sessionResults) return;
+    fetch('/api/sessions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(sessionResults),
+    }).catch(() => {});
+  }, [sessionResults]);
 
+  if (sessionResults) {
     return (
       <SummaryPage
         sessionResults={sessionResults}
         onRestart={() => {
           setCurrentPuzzleIndex(0);
           setResults([]);
-          setIsComplete(false);
+          setSessionResults(null);
         }}
       />
     );

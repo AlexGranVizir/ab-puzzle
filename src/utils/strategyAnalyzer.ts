@@ -1,6 +1,6 @@
 import { GridClick, GridState } from '../types/index';
 
-export type Strategy = 'additive' | 'subtractive' | 'mixed';
+export type Strategy = 'pure additive' | 'additive' | 'subtractive' | 'pure subtractive';
 
 /**
  * Infer the strategy used by analyzing click history
@@ -10,10 +10,9 @@ export type Strategy = 'additive' | 'subtractive' | 'mixed';
  */
 export function inferStrategy(
   initialState: GridState,
-  clickHistory: GridClick[],
-  finalState: GridState
+  clickHistory: GridClick[]
 ): Strategy {
-  if (clickHistory.length === 0) return 'mixed';
+  if (clickHistory.length === 0) return 'pure additive';
 
   let addedCount = 0;
   let removedCount = 0;
@@ -31,11 +30,10 @@ export function inferStrategy(
     grid[click.row][click.col] = !grid[click.row][click.col];
   });
 
-  const ratio = addedCount / (removedCount || 1); // Handle division by zero
-
-  if (ratio > 1.5) return 'additive';
-  if (ratio < 0.67) return 'subtractive'; // Less than 2/3 ratio means more removing
-  return 'mixed';
+  if (removedCount === 0) return 'pure additive';
+  if (addedCount === 0) return 'pure subtractive';
+  if (addedCount > removedCount) return 'additive';
+  return 'subtractive';
 }
 
 /**

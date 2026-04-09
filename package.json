@@ -11,6 +11,8 @@
     "@types/node": "^16.18.126",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-scripts": "5.0.1",
@@ -21,10 +23,15 @@
     "start": "HOST=0.0.0.0 PORT=9876 react-scripts start",
     "start:design": "REACT_APP_DESIGNER=true HOST=0.0.0.0 PORT=9876 react-scripts start",
     "build": "GENERATE_SOURCEMAP=false react-scripts build",
-    "serve": "npx serve -s build -l 9876",
+    "server": "node server.js",
+    "serve": "PORT=9876 node server.js",
+    "e2e": "playwright test",
+    "e2e:headed": "playwright test --headed",
+    "e2e:5": "playwright test --repeat-each=5 --workers=1",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
+  "proxy": "http://localhost:3002",
   "eslintConfig": {
     "extends": [
       "react-app",
@@ -42,5 +49,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.59.1"
   }
 }

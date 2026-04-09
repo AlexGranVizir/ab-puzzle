@@ -14,9 +14,7 @@ export interface PuzzleResult {
   clicks: number;
   optimalClicks: number;
   timeTaken: number; // in milliseconds
-  finalState: GridState;
-  clickHistory: GridClick[];
-  strategy: 'additive' | 'subtractive' | 'mixed';
+  strategy: 'pure additive' | 'additive' | 'subtractive' | 'pure subtractive';
   efficiency: number; // percentage: (optimalClicks / clicks) * 100
 }
 
