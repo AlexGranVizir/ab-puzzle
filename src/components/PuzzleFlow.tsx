@@ -3,9 +3,14 @@ import { puzzles } from '../data/puzzles';
 import { PuzzleResult, SessionResults } from '../types/index';
 import { Grid } from './Grid';
 import { SummaryPage } from './SummaryPage';
+import { WelcomeScreen } from './WelcomeScreen';
+import { ObjectiveScreen } from './ObjectiveScreen';
 import './PuzzleFlow.css';
 
+type Step = 'welcome' | 'objective' | 'puzzles';
+
 export const PuzzleFlow: React.FC = () => {
+  const [step, setStep] = useState<Step>('welcome');
   const [currentPuzzleIndex, setCurrentPuzzleIndex] = useState(0);
   const [results, setResults] = useState<PuzzleResult[]>([]);
   const [sessionStartTime] = useState(Date.now());
@@ -59,6 +64,14 @@ export const PuzzleFlow: React.FC = () => {
     }).catch(() => {});
   }, [sessionResults]);
 
+  if (step === 'welcome') {
+    return <WelcomeScreen onStart={() => setStep('objective')} />;
+  }
+
+  if (step === 'objective') {
+    return <ObjectiveScreen onBegin={() => setStep('puzzles')} />;
+  }
+
   if (sessionResults) {
     return (
       <SummaryPage
@@ -67,6 +80,7 @@ export const PuzzleFlow: React.FC = () => {
           setCurrentPuzzleIndex(0);
           setResults([]);
           setSessionResults(null);
+          setStep('welcome');
         }}
       />
     );

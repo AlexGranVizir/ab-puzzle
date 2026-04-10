@@ -1,0 +1,56 @@
+.objective-screen {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 36px 28px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.objective-screen h2 {
+  font-size: 22px;
+  color: #333;
+  margin: 0 0 24px;
+}
+
+.objective-screen p {
+  font-size: 15px;
+  color: #444;
+  line-height: 1.7;
+  margin: 0 0 16px;
+}
+
+.example-area {
+  display: flex;
+  justify-content: center;
+  margin: 4px 0 20px;
+}
+
+.example-canvas {
+  border: 2px solid #ddd;
+  border-radius: 4px;
+}
+
+.objective-begin-btn {
+  margin-top: 12px;
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.objective-begin-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(76,175,80,0.35);
+}
+
+.objective-begin-btn:active {
+  transform: translateY(0);
+}

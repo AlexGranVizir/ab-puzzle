@@ -126,7 +126,7 @@ export const Grid: React.FC<GridProps> = ({ puzzle, onComplete }) => {
         </div>
         {isComplete && (
           <button className="next-button" onClick={handleNext}>
-            Next Puzzle →
+            Continue →
           </button>
         )}
       </div>
