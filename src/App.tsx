@@ -26,7 +26,7 @@ function App() {
         {mode === 'play' || !DESIGNER_ENABLED ? <PuzzleFlow /> : <PuzzleDesigner />}
       </main>
       <footer className="app-footer">
-        <p>Grid Symmetry Puzzles</p>
+        <p>Made by Claude for Gran Vizir</p>
       </footer>
     </div>
   );
