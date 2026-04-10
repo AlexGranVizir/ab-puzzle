@@ -114,7 +114,7 @@ export const WelcomeScreen: React.FC<{ onStart: () => void }> = ({ onStart }) =>
       </div>
 
       <button className="welcome-start-btn" onClick={onStart} disabled={!ready}>
-        Start Puzzles →
+        Objectives →
       </button>
     </div>
   );

@@ -80,7 +80,7 @@ export const PuzzleFlow: React.FC = () => {
           setCurrentPuzzleIndex(0);
           setResults([]);
           setSessionResults(null);
-          setStep('welcome');
+          setStep('puzzles');
         }}
       />
     );

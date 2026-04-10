@@ -63,7 +63,7 @@ export const SummaryPage: React.FC<SummaryPageProps> = ({
       <StrategyDistributionPlot userSession={sessionResults} />
 
       <button className="restart-button" onClick={onRestart}>
-        ↻ Start Over
+        ↻ Retry Puzzles
       </button>
     </div>
   );
