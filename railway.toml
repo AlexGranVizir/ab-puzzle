@@ -1,2 +1,5 @@
+[build]
+buildCommand = "npm ci && npm run build"
+
 [deploy]
 startCommand = "node server.js"
