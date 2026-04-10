@@ -1,5 +1,2 @@
-[build]
-buildCommand = "npm ci --omit=dev && npm run build"
-
 [deploy]
 startCommand = "node server.js"
