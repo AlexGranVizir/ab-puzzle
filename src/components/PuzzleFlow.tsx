@@ -5,6 +5,7 @@ import { Grid } from './Grid';
 import { SummaryPage } from './SummaryPage';
 import { WelcomeScreen } from './WelcomeScreen';
 import { ObjectiveScreen } from './ObjectiveScreen';
+import { saveSession } from '../utils/storage';
 import './PuzzleFlow.css';
 
 type Step = 'welcome' | 'objective' | 'puzzles';
@@ -57,6 +58,7 @@ export const PuzzleFlow: React.FC = () => {
   // Fire-and-forget submission — runs exactly once when sessionResults is set
   useEffect(() => {
     if (!sessionResults) return;
+    saveSession(sessionResults);
     fetch('/api/sessions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
