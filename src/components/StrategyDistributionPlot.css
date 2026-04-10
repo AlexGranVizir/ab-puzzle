@@ -1,0 +1,62 @@
+.strategy-plot {
+  background: white;
+  padding: 25px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+  border: 1px solid #e0e0e0;
+}
+
+.plot-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.plot-header h2 {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.refresh-button {
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4CAF50;
+  background: white;
+  border: 1px solid #4CAF50;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.refresh-button:hover:not(:disabled) {
+  background: #4CAF50;
+  color: white;
+}
+
+.refresh-button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.plot-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.plot-loading {
+  color: #999;
+  text-align: center;
+  padding: 40px 0;
+  margin: 0;
+}
+
+.plot-caption {
+  margin: 12px 0 0 0;
+  font-size: 13px;
+  color: #888;
+  text-align: center;
+}

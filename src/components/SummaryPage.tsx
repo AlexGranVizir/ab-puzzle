@@ -1,5 +1,6 @@
 import React from 'react';
 import { SessionResults } from '../types/index';
+import { StrategyDistributionPlot } from './StrategyDistributionPlot';
 import './SummaryPage.css';
 
 interface SummaryPageProps {
@@ -24,6 +25,10 @@ export const SummaryPage: React.FC<SummaryPageProps> = ({
         <div className="stat-card">
           <div className="stat-label">Total Clicks</div>
           <div className="stat-value">{sessionResults.totalClicks}</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-label">Avg Efficiency</div>
+          <div className="stat-value">{sessionResults.averageEfficiency}%</div>
         </div>
         <div className="stat-card">
           <div className="stat-label">Total Time</div>
@@ -54,6 +59,8 @@ export const SummaryPage: React.FC<SummaryPageProps> = ({
           </tbody>
         </table>
       </div>
+
+      <StrategyDistributionPlot userSession={sessionResults} />
 
       <button className="restart-button" onClick={onRestart}>
         ↻ Start Over

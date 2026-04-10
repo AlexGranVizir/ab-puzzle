@@ -97,6 +97,66 @@ function computeSymmetryFixClicks(grid: boolean[][]): Array<[number, number]> {
   return actions;
 }
 
+function getSymmetryGroups(grid: boolean[][]) {
+  const groups: Array<{
+    cells: Array<[number, number]>;
+    trueIndexes: number[];
+    falseIndexes: number[];
+  }> = [];
+
+  for (let r = 0; r < GRID_SIZE / 2; r++) {
+    for (let c = 0; c < GRID_SIZE / 2; c++) {
+      const cells: Array<[number, number]> = [
+        [r, c],
+        [r, GRID_SIZE - 1 - c],
+        [GRID_SIZE - 1 - r, c],
+        [GRID_SIZE - 1 - r, GRID_SIZE - 1 - c],
+      ];
+
+      const trueIndexes: number[] = [];
+      const falseIndexes: number[] = [];
+      cells.forEach(([row, col], i) => {
+        if (grid[row][col]) trueIndexes.push(i);
+        else falseIndexes.push(i);
+      });
+
+      groups.push({ cells, trueIndexes, falseIndexes });
+    }
+  }
+
+  return groups;
+}
+
+function computePureAdditiveClicks(grid: boolean[][]): Array<[number, number]> {
+  const actions: Array<[number, number]> = [];
+  for (const group of getSymmetryGroups(grid)) {
+    if (group.trueIndexes.length === 0 || group.trueIndexes.length === 4) continue;
+    for (const i of group.falseIndexes) {
+      actions.push(group.cells[i]);
+    }
+  }
+  return actions;
+}
+
+function computePureSubtractiveClicks(grid: boolean[][]): Array<[number, number]> {
+  const groups = getSymmetryGroups(grid);
+  const fullGroups = groups.filter(g => g.trueIndexes.length === 4);
+  const anchorGroup = fullGroups[0];
+
+  // If no fully-filled symmetry group exists, pure subtractive completion cannot
+  // end non-empty. Return empty and let test fail explicitly via strategy asserts.
+  if (!anchorGroup) return [];
+
+  const actions: Array<[number, number]> = [];
+  for (const group of groups) {
+    if (group === anchorGroup) continue;
+    for (const i of group.trueIndexes) {
+      actions.push(group.cells[i]);
+    }
+  }
+  return actions;
+}
+
 function is4WaySymmetric(grid: boolean[][]): boolean {
   let hasAnyFilledCell = false;
 
@@ -129,27 +189,59 @@ async function saveCheckpointScreenshot(
   });
 }
 
-function findFirstCell(grid: boolean[][], target: boolean): [number, number] | null {
+function randomInt(minInclusive: number, maxInclusive: number): number {
+  return Math.floor(Math.random() * (maxInclusive - minInclusive + 1)) + minInclusive;
+}
+
+function randomPick<T>(items: T[]): T {
+  return items[randomInt(0, items.length - 1)];
+}
+
+function listCellsByState(grid: boolean[][], target: boolean): Array<[number, number]> {
+  const cells: Array<[number, number]> = [];
   for (let row = 0; row < GRID_SIZE; row++) {
     for (let col = 0; col < GRID_SIZE; col++) {
-      if (grid[row][col] === target) return [row, col];
+      if (grid[row][col] === target) cells.push([row, col]);
     }
   }
-  return null;
+  return cells;
 }
 
 async function applyHumanVariation(page: Page, puzzleIndex: number) {
   const grid = await readGridState(page);
+  const allCells = listCellsByState(grid, true).concat(listCellsByState(grid, false));
+  const filledCells = listCellsByState(grid, true);
+  const emptyCells = listCellsByState(grid, false);
 
-  // Alternate detour style across puzzles:
-  // even puzzle indexes bias additive clicks, odd indexes bias subtractive clicks.
-  const targetCell = puzzleIndex % 2 === 0
-    ? findFirstCell(grid, false)
-    : findFirstCell(grid, true);
+  if (allCells.length === 0) return;
 
-  if (!targetCell) return;
+  // Human-like "fidgeting": random back-and-forth pairs that waste clicks
+  // without changing net state. This guarantees non-optimal behavior.
+  const fidgetPairs = randomInt(1, 3);
+  for (let i = 0; i < fidgetPairs; i++) {
+    const [row, col] = randomPick(allCells);
+    await clickCell(page, row, col);
+    await clickCell(page, row, col);
+  }
 
-  const [row, col] = targetCell;
+  // Random tendency for this puzzle.
+  const tendencies = ['additive', 'subtractive', 'indecisive'] as const;
+  const tendency = randomPick([...tendencies]);
+
+  if (tendency === 'additive' && emptyCells.length > 0) {
+    const [row, col] = randomPick(emptyCells);
+    await clickCell(page, row, col);
+    return;
+  }
+
+  if (tendency === 'subtractive' && filledCells.length > 0) {
+    const [row, col] = randomPick(filledCells);
+    await clickCell(page, row, col);
+    return;
+  }
+
+  // Indecisive: toggle the same random cell 3 times (net one change, noisy trace).
+  const [row, col] = randomPick(allCells);
   await clickCell(page, row, col);
   await clickCell(page, row, col);
   await clickCell(page, row, col);
@@ -259,4 +351,88 @@ test('real e2e: human-like strategy variation is persisted', async ({ page, requ
   expect(hasNonOptimalPuzzle).toBeTruthy();
   expect(latestSession.totalClicks).toBeGreaterThan(totalOptimalClicks);
   expect(latestSession.averageEfficiency).toBeLessThan(100);
+});
+
+test('real e2e: pure additive strategy is persisted', async ({ page, request }, testInfo) => {
+  const sessionsBefore = await fetchSessions(request);
+  const initialCount = sessionsBefore.length;
+
+  await page.goto('/');
+  await saveCheckpointScreenshot(page, testInfo, 'pure-add-start');
+
+  for (let puzzleIndex = 0; puzzleIndex < 5; puzzleIndex++) {
+    await expect(page.getByText(`Puzzle ${puzzleIndex + 1} of 5`)).toBeVisible();
+    const grid = await readGridState(page);
+    const puzzleClicks = computePureAdditiveClicks(grid);
+
+    for (const [row, col] of puzzleClicks) {
+      await clickCell(page, row, col);
+    }
+
+    await expect(page.getByRole('button', { name: /Next Puzzle/i })).toBeVisible();
+    await saveCheckpointScreenshot(page, testInfo, `pure-add-puzzle-${puzzleIndex + 1}-ready`);
+    await page.getByRole('button', { name: /Next Puzzle/i }).click();
+  }
+
+  await expect(page.getByRole('heading', { name: 'All done!' })).toBeVisible();
+  await saveCheckpointScreenshot(page, testInfo, 'pure-add-summary');
+
+  await expect
+    .poll(async () => {
+      const sessions = await fetchSessions(request);
+      return sessions.length;
+    }, {
+      timeout: 10000,
+    })
+    .toBe(initialCount + 1);
+
+  const sessionsAfter = await fetchSessions(request);
+  const latestSession = sessionsAfter[sessionsAfter.length - 1];
+
+  expect(latestSession.puzzles).toHaveLength(5);
+  for (const puzzle of latestSession.puzzles) {
+    expect(puzzle.strategy).toBe('pure additive');
+  }
+});
+
+test('real e2e: pure subtractive strategy is persisted', async ({ page, request }, testInfo) => {
+  const sessionsBefore = await fetchSessions(request);
+  const initialCount = sessionsBefore.length;
+
+  await page.goto('/');
+  await saveCheckpointScreenshot(page, testInfo, 'pure-sub-start');
+
+  for (let puzzleIndex = 0; puzzleIndex < 5; puzzleIndex++) {
+    await expect(page.getByText(`Puzzle ${puzzleIndex + 1} of 5`)).toBeVisible();
+    const grid = await readGridState(page);
+    const puzzleClicks = computePureSubtractiveClicks(grid);
+
+    for (const [row, col] of puzzleClicks) {
+      await clickCell(page, row, col);
+    }
+
+    await expect(page.getByRole('button', { name: /Next Puzzle/i })).toBeVisible();
+    await saveCheckpointScreenshot(page, testInfo, `pure-sub-puzzle-${puzzleIndex + 1}-ready`);
+    await page.getByRole('button', { name: /Next Puzzle/i }).click();
+  }
+
+  await expect(page.getByRole('heading', { name: 'All done!' })).toBeVisible();
+  await saveCheckpointScreenshot(page, testInfo, 'pure-sub-summary');
+
+  await expect
+    .poll(async () => {
+      const sessions = await fetchSessions(request);
+      return sessions.length;
+    }, {
+      timeout: 10000,
+    })
+    .toBe(initialCount + 1);
+
+  const sessionsAfter = await fetchSessions(request);
+  const latestSession = sessionsAfter[sessionsAfter.length - 1];
+
+  expect(latestSession.puzzles).toHaveLength(5);
+  for (const puzzle of latestSession.puzzles) {
+    expect(puzzle.strategy).toBe('pure subtractive');
+  }
 });

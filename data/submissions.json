@@ -1,1 +1,652 @@
-[]
+[
+  {
+    "sessionId": "session-1775743179712",
+    "puzzles": [
+      {
+        "puzzleId": 1,
+        "clicks": 3,
+        "optimalClicks": 3,
+        "timeTaken": 763,
+        "strategy": "pure subtractive",
+        "efficiency": 100
+      },
+      {
+        "puzzleId": 2,
+        "clicks": 6,
+        "optimalClicks": 6,
+        "timeTaken": 666,
+        "strategy": "pure subtractive",
+        "efficiency": 100
+      },
+      {
+        "puzzleId": 3,
+        "clicks": 6,
+        "optimalClicks": 6,
+        "timeTaken": 616,
+        "strategy": "pure subtractive",
+        "efficiency": 100
+      },
+      {
+        "puzzleId": 4,
+        "clicks": 6,
+        "optimalClicks": 6,
+        "timeTaken": 645,
+        "strategy": "additive",
+        "efficiency": 100
+      },
+      {
+        "puzzleId": 5,
+        "clicks": 10,
+        "optimalClicks": 10,
+        "timeTaken": 834,
+        "strategy": "additive",
+        "efficiency": 100
+      }
+    ],
+    "totalClicks": 31,
+    "totalTime": 3527,
+    "averageEfficiency": 100,
+    "startTime": 1775743176185,
+    "endTime": 1775743179712
+  },
+  {
+    "sessionId": "session-1775743185679",
+    "puzzles": [
+      {
+        "puzzleId": 1,
+        "clicks": 9,
+        "optimalClicks": 3,
+        "timeTaken": 1065,
+        "strategy": "subtractive",
+        "efficiency": 33
+      },
+      {
+        "puzzleId": 2,
+        "clicks": 14,
+        "optimalClicks": 6,
+        "timeTaken": 1070,
+        "strategy": "subtractive",
+        "efficiency": 43
+      },
+      {
+        "puzzleId": 3,
+        "clicks": 14,
+        "optimalClicks": 6,
+        "timeTaken": 1095,
+        "strategy": "subtractive",
+        "efficiency": 43
+      },
+      {
+        "puzzleId": 4,
+        "clicks": 14,
+        "optimalClicks": 6,
+        "timeTaken": 1036,
+        "strategy": "additive",
+        "efficiency": 43
+      },
+      {
+        "puzzleId": 5,
+        "clicks": 18,
+        "optimalClicks": 10,
+        "timeTaken": 1278,
+        "strategy": "additive",
+        "efficiency": 56
+      }
+    ],
+    "totalClicks": 69,
+    "totalTime": 5546,
+    "averageEfficiency": 44,
+    "startTime": 1775743180133,
+    "endTime": 1775743185679
+  },
+  {
+    "sessionId": "session-1775743190732",
+    "puzzles": [
+      {
+        "puzzleId": 1,
+        "clicks": 9,
+        "optimalClicks": 3,
+        "timeTaken": 916,
+        "strategy": "pure additive",
+        "efficiency": 33
+      },
+      {
+        "puzzleId": 2,
+        "clicks": 18,
+        "optimalClicks": 6,
+        "timeTaken": 1066,
+        "strategy": "pure additive",
+        "efficiency": 33
+      },
+      {
+        "puzzleId": 3,
+        "clicks": 18,
+        "optimalClicks": 6,
+        "timeTaken": 979,
+        "strategy": "pure additive",
+        "efficiency": 33
+      },
+      {
+        "puzzleId": 4,
+        "clicks": 10,
+        "optimalClicks": 6,
+        "timeTaken": 771,
+        "strategy": "pure additive",
+        "efficiency": 60
+      },
+      {
+        "puzzleId": 5,
+        "clicks": 14,
+        "optimalClicks": 10,
+        "timeTaken": 918,
+        "strategy": "pure additive",
+        "efficiency": 71
+      }
+    ],
+    "totalClicks": 69,
+    "totalTime": 4651,
+    "averageEfficiency": 46,
+    "startTime": 1775743186081,
+    "endTime": 1775743190732
+  },
+  {
+    "sessionId": "session-1775743198546",
+    "puzzles": [
+      {
+        "puzzleId": 1,
+        "clicks": 11,
+        "optimalClicks": 3,
+        "timeTaken": 1872,
+        "strategy": "pure subtractive",
+        "efficiency": 27
+      },
+      {
+        "puzzleId": 2,
+        "clicks": 6,
+        "optimalClicks": 6,
+        "timeTaken": 2013,
+        "strategy": "pure subtractive",
+        "efficiency": 100
+      },
+      {
+        "puzzleId": 3,
+        "clicks": 6,
+        "optimalClicks": 6,
+        "timeTaken": 1532,
+        "strategy": "pure subtractive",
+        "efficiency": 100
+      },
+      {
+        "puzzleId": 4,
+        "clicks": 6,
+        "optimalClicks": 6,
+        "timeTaken": 1085,
+        "strategy": "pure subtractive",
+        "efficiency": 100
+      },
+      {
+        "puzzleId": 5,
+        "clicks": 10,
+        "optimalClicks": 10,
+        "timeTaken": 900,
+        "strategy": "pure subtractive",
+        "efficiency": 100
+      }
+    ],
+    "totalClicks": 39,
+    "totalTime": 7408,
+    "averageEfficiency": 85,
+    "startTime": 1775743191138,
+    "endTime": 1775743198546
+  },
+  {
+    "sessionId": "session-1775743319779",
+    "puzzles": [
+      {
+        "puzzleId": 1,
+        "clicks": 3,
+        "optimalClicks": 3,
+        "timeTaken": 6908,
+        "strategy": "pure subtractive",
+        "efficiency": 100
+      },
+      {
+        "puzzleId": 2,
+        "clicks": 6,
+        "optimalClicks": 6,
+        "timeTaken": 3822,
+        "strategy": "pure subtractive",
+        "efficiency": 100
+      },
+      {
+        "puzzleId": 3,
+        "clicks": 6,
+        "optimalClicks": 6,
+        "timeTaken": 3272,
+        "strategy": "pure subtractive",
+        "efficiency": 100
+      },
+      {
+        "puzzleId": 4,
+        "clicks": 6,
+        "optimalClicks": 6,
+        "timeTaken": 6279,
+        "strategy": "additive",
+        "efficiency": 100
+      },
+      {
+        "puzzleId": 5,
+        "clicks": 12,
+        "optimalClicks": 10,
+        "timeTaken": 10993,
+        "strategy": "subtractive",
+        "efficiency": 83
+      }
+    ],
+    "totalClicks": 33,
+    "totalTime": 31276,
+    "averageEfficiency": 97,
+    "startTime": 1775743288503,
+    "endTime": 1775743319779
+  },
+  {
+    "sessionId": "session-1775743497083",
+    "puzzles": [
+      {
+        "puzzleId": 1,
+        "clicks": 3,
+        "optimalClicks": 3,
+        "timeTaken": 2999,
+        "strategy": "pure subtractive",
+        "efficiency": 100
+      },
+      {
+        "puzzleId": 2,
+        "clicks": 6,
+        "optimalClicks": 6,
+        "timeTaken": 3399,
+        "strategy": "pure subtractive",
+        "efficiency": 100
+      },
+      {
+        "puzzleId": 3,
+        "clicks": 6,
+        "optimalClicks": 6,
+        "timeTaken": 3727,
+        "strategy": "pure subtractive",
+        "efficiency": 100
+      },
+      {
+        "puzzleId": 4,
+        "clicks": 6,
+        "optimalClicks": 6,
+        "timeTaken": 3904,
+        "strategy": "pure subtractive",
+        "efficiency": 100
+      },
+      {
+        "puzzleId": 5,
+        "clicks": 10,
+        "optimalClicks": 10,
+        "timeTaken": 5001,
+        "strategy": "pure subtractive",
+        "efficiency": 100
+      }
+    ],
+    "totalClicks": 31,
+    "totalTime": 19030,
+    "averageEfficiency": 100,
+    "startTime": 1775743478053,
+    "endTime": 1775743497083
+  },
+  {
+    "sessionId": "session-1775743747363",
+    "puzzles": [
+      {
+        "puzzleId": 1,
+        "clicks": 3,
+        "optimalClicks": 3,
+        "timeTaken": 3470,
+        "strategy": "pure subtractive",
+        "efficiency": 100
+      },
+      {
+        "puzzleId": 2,
+        "clicks": 6,
+        "optimalClicks": 6,
+        "timeTaken": 3439,
+        "strategy": "pure subtractive",
+        "efficiency": 100
+      },
+      {
+        "puzzleId": 3,
+        "clicks": 8,
+        "optimalClicks": 6,
+        "timeTaken": 4249,
+        "strategy": "subtractive",
+        "efficiency": 75
+      },
+      {
+        "puzzleId": 4,
+        "clicks": 6,
+        "optimalClicks": 6,
+        "timeTaken": 4327,
+        "strategy": "pure subtractive",
+        "efficiency": 100
+      },
+      {
+        "puzzleId": 5,
+        "clicks": 10,
+        "optimalClicks": 10,
+        "timeTaken": 5471,
+        "strategy": "additive",
+        "efficiency": 100
+      }
+    ],
+    "totalClicks": 33,
+    "totalTime": 20958,
+    "averageEfficiency": 95,
+    "startTime": 1775743726405,
+    "endTime": 1775743747363
+  },
+  {
+    "sessionId": "session-1775743810641",
+    "puzzles": [
+      {
+        "puzzleId": 1,
+        "clicks": 3,
+        "optimalClicks": 3,
+        "timeTaken": 750,
+        "strategy": "pure subtractive",
+        "efficiency": 100
+      },
+      {
+        "puzzleId": 2,
+        "clicks": 6,
+        "optimalClicks": 6,
+        "timeTaken": 631,
+        "strategy": "pure subtractive",
+        "efficiency": 100
+      },
+      {
+        "puzzleId": 3,
+        "clicks": 6,
+        "optimalClicks": 6,
+        "timeTaken": 637,
+        "strategy": "pure subtractive",
+        "efficiency": 100
+      },
+      {
+        "puzzleId": 4,
+        "clicks": 6,
+        "optimalClicks": 6,
+        "timeTaken": 647,
+        "strategy": "additive",
+        "efficiency": 100
+      },
+      {
+        "puzzleId": 5,
+        "clicks": 10,
+        "optimalClicks": 10,
+        "timeTaken": 852,
+        "strategy": "additive",
+        "efficiency": 100
+      }
+    ],
+    "totalClicks": 31,
+    "totalTime": 3518,
+    "averageEfficiency": 100,
+    "startTime": 1775743807123,
+    "endTime": 1775743810641
+  },
+  {
+    "sessionId": "session-1775743816089",
+    "puzzles": [
+      {
+        "puzzleId": 1,
+        "clicks": 13,
+        "optimalClicks": 3,
+        "timeTaken": 1182,
+        "strategy": "subtractive",
+        "efficiency": 23
+      },
+      {
+        "puzzleId": 2,
+        "clicks": 12,
+        "optimalClicks": 6,
+        "timeTaken": 967,
+        "strategy": "subtractive",
+        "efficiency": 50
+      },
+      {
+        "puzzleId": 3,
+        "clicks": 10,
+        "optimalClicks": 6,
+        "timeTaken": 793,
+        "strategy": "subtractive",
+        "efficiency": 60
+      },
+      {
+        "puzzleId": 4,
+        "clicks": 12,
+        "optimalClicks": 6,
+        "timeTaken": 932,
+        "strategy": "additive",
+        "efficiency": 50
+      },
+      {
+        "puzzleId": 5,
+        "clicks": 16,
+        "optimalClicks": 10,
+        "timeTaken": 1120,
+        "strategy": "additive",
+        "efficiency": 63
+      }
+    ],
+    "totalClicks": 63,
+    "totalTime": 4997,
+    "averageEfficiency": 49,
+    "startTime": 1775743811092,
+    "endTime": 1775743816089
+  },
+  {
+    "sessionId": "session-1775743821194",
+    "puzzles": [
+      {
+        "puzzleId": 1,
+        "clicks": 9,
+        "optimalClicks": 3,
+        "timeTaken": 840,
+        "strategy": "pure additive",
+        "efficiency": 33
+      },
+      {
+        "puzzleId": 2,
+        "clicks": 18,
+        "optimalClicks": 6,
+        "timeTaken": 1034,
+        "strategy": "pure additive",
+        "efficiency": 33
+      },
+      {
+        "puzzleId": 3,
+        "clicks": 18,
+        "optimalClicks": 6,
+        "timeTaken": 1134,
+        "strategy": "pure additive",
+        "efficiency": 33
+      },
+      {
+        "puzzleId": 4,
+        "clicks": 10,
+        "optimalClicks": 6,
+        "timeTaken": 784,
+        "strategy": "pure additive",
+        "efficiency": 60
+      },
+      {
+        "puzzleId": 5,
+        "clicks": 14,
+        "optimalClicks": 10,
+        "timeTaken": 904,
+        "strategy": "pure additive",
+        "efficiency": 71
+      }
+    ],
+    "totalClicks": 69,
+    "totalTime": 4698,
+    "averageEfficiency": 46,
+    "startTime": 1775743816496,
+    "endTime": 1775743821194
+  },
+  {
+    "sessionId": "session-1775743828688",
+    "puzzles": [
+      {
+        "puzzleId": 1,
+        "clicks": 11,
+        "optimalClicks": 3,
+        "timeTaken": 1754,
+        "strategy": "pure subtractive",
+        "efficiency": 27
+      },
+      {
+        "puzzleId": 2,
+        "clicks": 6,
+        "optimalClicks": 6,
+        "timeTaken": 2055,
+        "strategy": "pure subtractive",
+        "efficiency": 100
+      },
+      {
+        "puzzleId": 3,
+        "clicks": 6,
+        "optimalClicks": 6,
+        "timeTaken": 1427,
+        "strategy": "pure subtractive",
+        "efficiency": 100
+      },
+      {
+        "puzzleId": 4,
+        "clicks": 6,
+        "optimalClicks": 6,
+        "timeTaken": 982,
+        "strategy": "pure subtractive",
+        "efficiency": 100
+      },
+      {
+        "puzzleId": 5,
+        "clicks": 10,
+        "optimalClicks": 10,
+        "timeTaken": 885,
+        "strategy": "pure subtractive",
+        "efficiency": 100
+      }
+    ],
+    "totalClicks": 39,
+    "totalTime": 7106,
+    "averageEfficiency": 85,
+    "startTime": 1775743821582,
+    "endTime": 1775743828688
+  },
+  {
+    "sessionId": "session-1775749189452",
+    "puzzles": [
+      {
+        "puzzleId": 1,
+        "clicks": 9,
+        "optimalClicks": 3,
+        "timeTaken": 1925395,
+        "strategy": "pure additive",
+        "efficiency": 33
+      },
+      {
+        "puzzleId": 2,
+        "clicks": 18,
+        "optimalClicks": 6,
+        "timeTaken": 25311,
+        "strategy": "pure additive",
+        "efficiency": 33
+      },
+      {
+        "puzzleId": 3,
+        "clicks": 18,
+        "optimalClicks": 6,
+        "timeTaken": 214272,
+        "strategy": "pure additive",
+        "efficiency": 33
+      },
+      {
+        "puzzleId": 4,
+        "clicks": 6,
+        "optimalClicks": 6,
+        "timeTaken": 19847,
+        "strategy": "additive",
+        "efficiency": 100
+      },
+      {
+        "puzzleId": 5,
+        "clicks": 10,
+        "optimalClicks": 10,
+        "timeTaken": 104719,
+        "strategy": "additive",
+        "efficiency": 100
+      }
+    ],
+    "totalClicks": 61,
+    "totalTime": 2289548,
+    "averageEfficiency": 60,
+    "startTime": 1775746899904,
+    "endTime": 1775749189452
+  },
+  {
+    "sessionId": "session-1775749794964",
+    "puzzles": [
+      {
+        "puzzleId": 1,
+        "clicks": 9,
+        "optimalClicks": 3,
+        "timeTaken": 95448,
+        "strategy": "additive",
+        "efficiency": 33
+      },
+      {
+        "puzzleId": 2,
+        "clicks": 18,
+        "optimalClicks": 6,
+        "timeTaken": 22296,
+        "strategy": "pure additive",
+        "efficiency": 33
+      },
+      {
+        "puzzleId": 3,
+        "clicks": 18,
+        "optimalClicks": 6,
+        "timeTaken": 11664,
+        "strategy": "pure additive",
+        "efficiency": 33
+      },
+      {
+        "puzzleId": 4,
+        "clicks": 10,
+        "optimalClicks": 6,
+        "timeTaken": 8823,
+        "strategy": "pure additive",
+        "efficiency": 60
+      },
+      {
+        "puzzleId": 5,
+        "clicks": 14,
+        "optimalClicks": 10,
+        "timeTaken": 9849,
+        "strategy": "pure additive",
+        "efficiency": 71
+      }
+    ],
+    "totalClicks": 69,
+    "totalTime": 148080,
+    "averageEfficiency": 46,
+    "startTime": 1775749646884,
+    "endTime": 1775749794964
+  }
+]
