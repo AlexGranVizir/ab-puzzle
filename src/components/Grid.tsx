@@ -14,11 +14,17 @@ interface GridProps {
 }
 
 const GRID_SIZE = 10;
-const CELL_SIZE = 40;
 const GRID_PADDING = 10;
+const MAX_CELL_SIZE = 40;
+
+const getCellSize = () => {
+  const available = Math.min(window.innerWidth - 48, 420); // 48px for page margins
+  return Math.min(MAX_CELL_SIZE, Math.floor((available - GRID_PADDING * 2) / GRID_SIZE));
+};
 
 export const Grid: React.FC<GridProps> = ({ puzzle, onComplete }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [cellSize, setCellSize] = useState(getCellSize);
   const [gridState, setGridState] = useState<GridState>(
     puzzle.initialState.map(row => [...row])
   );
@@ -27,7 +33,13 @@ export const Grid: React.FC<GridProps> = ({ puzzle, onComplete }) => {
   const [startTime] = useState(Date.now());
   const [isComplete, setIsComplete] = useState(false);
 
-  // Redraw whenever grid state changes
+  useEffect(() => {
+    const onResize = () => setCellSize(getCellSize());
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
+  // Redraw whenever grid state or cell size changes
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -39,46 +51,52 @@ export const Grid: React.FC<GridProps> = ({ puzzle, onComplete }) => {
 
     for (let r = 0; r < GRID_SIZE; r++) {
       for (let c = 0; c < GRID_SIZE; c++) {
-        const x = GRID_PADDING + c * CELL_SIZE;
-        const y = GRID_PADDING + r * CELL_SIZE;
+        const x = GRID_PADDING + c * cellSize;
+        const y = GRID_PADDING + r * cellSize;
         ctx.strokeStyle = '#ddd';
         ctx.lineWidth = 1;
-        ctx.strokeRect(x, y, CELL_SIZE, CELL_SIZE);
+        ctx.strokeRect(x, y, cellSize, cellSize);
         if (gridState[r][c]) {
           ctx.fillStyle = '#4CAF50';
-          ctx.fillRect(x, y, CELL_SIZE, CELL_SIZE);
+          ctx.fillRect(x, y, cellSize, cellSize);
         }
       }
     }
 
-    // Complete when any 4-way symmetric arrangement is reached
     if (is4WaySymmetric(gridState) && !isComplete) {
       setIsComplete(true);
     }
-  }, [gridState, isComplete]);
+  }, [gridState, isComplete, cellSize]);
 
-  const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (isComplete) return;
-
+  const cellFromPoint = (clientX: number, clientY: number) => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
-
+    if (!canvas) return null;
     const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const col = Math.floor((clientX - rect.left - GRID_PADDING) / cellSize);
+    const row = Math.floor((clientY - rect.top  - GRID_PADDING) / cellSize);
+    if (row < 0 || row >= GRID_SIZE || col < 0 || col >= GRID_SIZE) return null;
+    return { row, col };
+  };
 
-    const col = Math.floor((x - GRID_PADDING) / CELL_SIZE);
-    const row = Math.floor((y - GRID_PADDING) / CELL_SIZE);
-
-    if (row < 0 || row >= GRID_SIZE || col < 0 || col >= GRID_SIZE) return;
-
+  const toggleCell = (row: number, col: number) => {
+    if (isComplete) return;
     const newGridState = gridState.map(r => [...r]);
     newGridState[row][col] = !newGridState[row][col];
     setGridState(newGridState);
+    setClickHistory(prev => [...prev, { row, col, timestamp: Date.now() - startTime }]);
+    setClicks(c => c + 1);
+  };
 
-    const newClick: GridClick = { row, col, timestamp: Date.now() - startTime };
-    setClickHistory([...clickHistory, newClick]);
-    setClicks(clicks + 1);
+  const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    const cell = cellFromPoint(e.clientX, e.clientY);
+    if (cell) toggleCell(cell.row, cell.col);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    e.preventDefault();
+    const touch = e.changedTouches[0];
+    const cell = cellFromPoint(touch.clientX, touch.clientY);
+    if (cell) toggleCell(cell.row, cell.col);
   };
 
   const handleNext = () => {
@@ -88,7 +106,7 @@ export const Grid: React.FC<GridProps> = ({ puzzle, onComplete }) => {
     onComplete({ clicks, timeTaken, strategy, efficiency });
   };
 
-  const canvasSize = GRID_PADDING * 2 + GRID_SIZE * CELL_SIZE;
+  const canvasSize = GRID_PADDING * 2 + GRID_SIZE * cellSize;
 
   return (
     <div className="grid-container">
@@ -118,6 +136,7 @@ export const Grid: React.FC<GridProps> = ({ puzzle, onComplete }) => {
           width={canvasSize}
           height={canvasSize}
           onClick={handleCanvasClick}
+          onTouchEnd={handleTouchEnd}
           className="grid-canvas"
         />
       </div>

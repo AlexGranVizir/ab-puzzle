@@ -80,6 +80,7 @@
   background: white;
   border-radius: 4px;
   transition: border-color 0.2s;
+  touch-action: manipulation;
 }
 
 .grid-canvas:hover {
@@ -106,5 +107,21 @@
 
 .next-button:active {
   transform: translateY(0);
+}
+
+@media (max-width: 480px) {
+  .grid-container {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .grid-info h2 {
+    font-size: 18px;
+  }
+
+  .next-button {
+    width: 100%;
+    padding: 14px;
+  }
 }
 
