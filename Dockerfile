@@ -1,9 +1,9 @@
 FROM node:20 AS builder
 WORKDIR /app
 COPY package*.json ./
-RUN npm install
+RUN npm ci
 COPY . .
-RUN npm run build
+RUN CI=false npm run build
 
 FROM node:20-slim
 WORKDIR /app
