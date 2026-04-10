@@ -1,16 +1,18 @@
-FROM node:20 AS builder
+# ── Stage 1: build the React app ─────────────────────────────────────────────
+FROM node:20-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
-RUN NODE_ENV=development npm ci
+RUN npm ci
 COPY . .
-RUN GENERATE_SOURCEMAP=false CI=false node node_modules/react-scripts/bin/react-scripts.js build
+RUN GENERATE_SOURCEMAP=false CI=false npm run build
 
-FROM node:20-slim
+# ── Stage 2: production image ─────────────────────────────────────────────────
+FROM node:20-alpine
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci --omit=dev
-COPY --from=builder /app/build ./build
 COPY server.js ./
+COPY --from=builder /app/build ./build
 
 EXPOSE 3002
 CMD ["node", "server.js"]
