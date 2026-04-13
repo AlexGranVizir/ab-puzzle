@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SessionResults, PuzzleResult } from '../types/index';
-import { loadSessions } from '../utils/storage';
 import { puzzles } from '../data/puzzles';
 import './StatsPage.css';
 
@@ -49,7 +48,25 @@ const Bar: React.FC<{ value: number; max: number; color: string }> = ({ value, m
 );
 
 export const StatsPage: React.FC = () => {
-  const [sessions] = useState<SessionResults[]>(loadSessions);
+  const [sessions, setSessions] = useState<SessionResults[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch('/api/sessions')
+      .then(r => r.json())
+      .then(data => setSessions(data))
+      .catch(() => setError('Failed to load sessions from server.'))
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) {
+    return <div className="stats-page"><h2>Statistics</h2><p className="no-data">Loading…</p></div>;
+  }
+
+  if (error) {
+    return <div className="stats-page"><h2>Statistics</h2><p className="no-data">{error}</p></div>;
+  }
 
   if (sessions.length === 0) {
     return (

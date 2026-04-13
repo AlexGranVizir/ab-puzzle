@@ -45,6 +45,7 @@ export const SummaryPage: React.FC<SummaryPageProps> = ({
               <th>Clicks</th>
               <th>Optimal</th>
               <th>Time</th>
+              <th>Strategy Used</th>
             </tr>
           </thead>
           <tbody>
@@ -54,6 +55,7 @@ export const SummaryPage: React.FC<SummaryPageProps> = ({
                 <td>{puzzle.clicks}</td>
                 <td>{puzzle.optimalClicks}</td>
                 <td>{Math.round(puzzle.timeTaken / 1000)}s</td>
+                <td>{puzzle.strategy.charAt(0).toUpperCase() + puzzle.strategy.slice(1)}</td>
               </tr>
             ))}
           </tbody>
