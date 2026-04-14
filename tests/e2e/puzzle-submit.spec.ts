@@ -1,39 +1,51 @@
 import { expect, Page, TestInfo, test } from '@playwright/test';
 
 const GRID_SIZE = 10;
-const CELL_SIZE = 40;
 const GRID_PADDING = 10;
+const WELCOME_PADDING = 8;
 
-function getCellCenter(row: number, col: number) {
+function getCellCenter(row: number, col: number, cellSize: number, padding: number) {
   return {
-    x: GRID_PADDING + col * CELL_SIZE + CELL_SIZE / 2,
-    y: GRID_PADDING + row * CELL_SIZE + CELL_SIZE / 2,
+    x: padding + col * cellSize + cellSize / 2,
+    y: padding + row * cellSize + cellSize / 2,
   };
 }
 
 async function clickCell(page: Page, row: number, col: number) {
   const canvas = page.locator('.grid-canvas');
-  const point = getCellCenter(row, col);
+  const canvasWidth = await canvas.evaluate((node: HTMLCanvasElement) => node.width);
+  const cellSize = (canvasWidth - GRID_PADDING * 2) / GRID_SIZE;
+  const point = getCellCenter(row, col, cellSize, GRID_PADDING);
+  await canvas.click({ position: point });
+}
+
+async function clickWelcomeCell(page: Page, row: number, col: number) {
+  const canvas = page.locator('.welcome-canvas');
+  const canvasWidth = await canvas.evaluate((node: HTMLCanvasElement) => node.width);
+  const cellSize = (canvasWidth - WELCOME_PADDING * 2) / GRID_SIZE;
+  const point = getCellCenter(row, col, cellSize, WELCOME_PADDING);
   await canvas.click({ position: point });
 }
 
 async function readGridState(page: Page): Promise<boolean[][]> {
-  return page.locator('.grid-canvas').evaluate((canvas, cfg) => {
-    const ctx = (canvas as HTMLCanvasElement).getContext('2d');
+  return page.locator('.grid-canvas').evaluate((canvas: HTMLCanvasElement, cfg: { gridSize: number; padding: number }) => {
+    const ctx = canvas.getContext('2d');
     if (!ctx) throw new Error('2D context not available');
+
+    const cellSize = (canvas.width - cfg.padding * 2) / cfg.gridSize;
 
     const grid = Array.from({ length: cfg.gridSize }, () => Array(cfg.gridSize).fill(false));
     for (let row = 0; row < cfg.gridSize; row++) {
       for (let col = 0; col < cfg.gridSize; col++) {
-        const x = Math.floor(cfg.padding + col * cfg.cellSize + cfg.cellSize / 2);
-        const y = Math.floor(cfg.padding + row * cfg.cellSize + cfg.cellSize / 2);
+        const x = Math.floor(cfg.padding + col * cellSize + cellSize / 2);
+        const y = Math.floor(cfg.padding + row * cellSize + cellSize / 2);
         const pixel = ctx.getImageData(x, y, 1, 1).data;
         const greenDominant = pixel[1] - pixel[0] > 40 && pixel[1] - pixel[2] > 40;
         grid[row][col] = greenDominant;
       }
     }
     return grid;
-  }, { gridSize: GRID_SIZE, cellSize: CELL_SIZE, padding: GRID_PADDING });
+  }, { gridSize: GRID_SIZE, padding: GRID_PADDING });
 }
 
 function computeSymmetryFixClicks(grid: boolean[][]): Array<[number, number]> {
@@ -197,6 +209,31 @@ function randomPick<T>(items: T[]): T {
   return items[randomInt(0, items.length - 1)];
 }
 
+async function startPuzzleSession(page: Page, testInfo: TestInfo, labelPrefix: string) {
+  await page.goto('/');
+  await expect(page.getByRole('heading', { name: 'How to play' })).toBeVisible();
+  await saveCheckpointScreenshot(page, testInfo, `${labelPrefix}welcome`);
+
+  for (const [row, col] of [[1, 1], [4, 4], [7, 2]] as Array<[number, number]>) {
+    await clickWelcomeCell(page, row, col);
+  }
+
+  const objectivesButton = page.getByRole('button', { name: /Objectives/i });
+  await expect(objectivesButton).toBeEnabled();
+  await objectivesButton.click();
+
+  await expect(page.getByRole('heading', { name: 'Your objective' })).toBeVisible();
+  await saveCheckpointScreenshot(page, testInfo, `${labelPrefix}objective`);
+  await page.getByRole('button', { name: /Begin/i }).click();
+
+  await expect(page.getByText('Puzzle 1 of 5')).toBeVisible();
+}
+
+async function advanceFromCompletedPuzzle(page: Page) {
+  await expect(page.getByRole('button', { name: /Continue/i })).toBeVisible();
+  await page.getByRole('button', { name: /Continue/i }).click();
+}
+
 function listCellsByState(grid: boolean[][], target: boolean): Array<[number, number]> {
   const cells: Array<[number, number]> = [];
   for (let row = 0; row < GRID_SIZE; row++) {
@@ -207,7 +244,7 @@ function listCellsByState(grid: boolean[][], target: boolean): Array<[number, nu
   return cells;
 }
 
-async function applyHumanVariation(page: Page, puzzleIndex: number) {
+async function applyHumanVariation(page: Page) {
   const grid = await readGridState(page);
   const allCells = listCellsByState(grid, true).concat(listCellsByState(grid, false));
   const filledCells = listCellsByState(grid, true);
@@ -251,12 +288,11 @@ test('real e2e: completes all puzzles and persists session', async ({ page, requ
   const sessionsBefore = await fetchSessions(request);
   const initialCount = sessionsBefore.length;
 
-  await page.goto('/');
-  await saveCheckpointScreenshot(page, testInfo, 'start');
+  await startPuzzleSession(page, testInfo, 'core-');
 
   for (let puzzleIndex = 0; puzzleIndex < 5; puzzleIndex++) {
     await expect(page.getByText(`Puzzle ${puzzleIndex + 1} of 5`)).toBeVisible();
-    await saveCheckpointScreenshot(page, testInfo, `puzzle-${puzzleIndex + 1}-before`);
+    await saveCheckpointScreenshot(page, testInfo, `core-puzzle-${puzzleIndex + 1}-before`);
 
     for (let attempt = 0; attempt < 3; attempt++) {
       const grid = await readGridState(page);
@@ -268,13 +304,13 @@ test('real e2e: completes all puzzles and persists session', async ({ page, requ
       }
     }
 
-    await expect(page.getByRole('button', { name: /Next Puzzle/i })).toBeVisible();
-    await saveCheckpointScreenshot(page, testInfo, `puzzle-${puzzleIndex + 1}-ready`);
-    await page.getByRole('button', { name: /Next Puzzle/i }).click();
+    await expect(page.getByRole('button', { name: /Continue/i })).toBeVisible();
+    await saveCheckpointScreenshot(page, testInfo, `core-puzzle-${puzzleIndex + 1}-ready`);
+    await advanceFromCompletedPuzzle(page);
   }
 
   await expect(page.getByRole('heading', { name: 'All done!' })).toBeVisible();
-  await saveCheckpointScreenshot(page, testInfo, 'summary');
+  await saveCheckpointScreenshot(page, testInfo, 'core-summary');
 
   await expect
     .poll(async () => {
@@ -298,14 +334,13 @@ test('real e2e: human-like strategy variation is persisted', async ({ page, requ
   const sessionsBefore = await fetchSessions(request);
   const initialCount = sessionsBefore.length;
 
-  await page.goto('/');
-  await saveCheckpointScreenshot(page, testInfo, 'human-start');
+  await startPuzzleSession(page, testInfo, 'human-');
 
   for (let puzzleIndex = 0; puzzleIndex < 5; puzzleIndex++) {
     await expect(page.getByText(`Puzzle ${puzzleIndex + 1} of 5`)).toBeVisible();
     await saveCheckpointScreenshot(page, testInfo, `human-puzzle-${puzzleIndex + 1}-before`);
 
-    await applyHumanVariation(page, puzzleIndex);
+    await applyHumanVariation(page);
 
     for (let attempt = 0; attempt < 4; attempt++) {
       const grid = await readGridState(page);
@@ -317,9 +352,9 @@ test('real e2e: human-like strategy variation is persisted', async ({ page, requ
       }
     }
 
-    await expect(page.getByRole('button', { name: /Next Puzzle/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Continue/i })).toBeVisible();
     await saveCheckpointScreenshot(page, testInfo, `human-puzzle-${puzzleIndex + 1}-ready`);
-    await page.getByRole('button', { name: /Next Puzzle/i }).click();
+    await advanceFromCompletedPuzzle(page);
   }
 
   await expect(page.getByRole('heading', { name: 'All done!' })).toBeVisible();
@@ -357,8 +392,7 @@ test('real e2e: pure additive strategy is persisted', async ({ page, request }, 
   const sessionsBefore = await fetchSessions(request);
   const initialCount = sessionsBefore.length;
 
-  await page.goto('/');
-  await saveCheckpointScreenshot(page, testInfo, 'pure-add-start');
+  await startPuzzleSession(page, testInfo, 'pure-add-');
 
   for (let puzzleIndex = 0; puzzleIndex < 5; puzzleIndex++) {
     await expect(page.getByText(`Puzzle ${puzzleIndex + 1} of 5`)).toBeVisible();
@@ -369,9 +403,9 @@ test('real e2e: pure additive strategy is persisted', async ({ page, request }, 
       await clickCell(page, row, col);
     }
 
-    await expect(page.getByRole('button', { name: /Next Puzzle/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Continue/i })).toBeVisible();
     await saveCheckpointScreenshot(page, testInfo, `pure-add-puzzle-${puzzleIndex + 1}-ready`);
-    await page.getByRole('button', { name: /Next Puzzle/i }).click();
+    await advanceFromCompletedPuzzle(page);
   }
 
   await expect(page.getByRole('heading', { name: 'All done!' })).toBeVisible();
@@ -399,8 +433,7 @@ test('real e2e: pure subtractive strategy is persisted', async ({ page, request 
   const sessionsBefore = await fetchSessions(request);
   const initialCount = sessionsBefore.length;
 
-  await page.goto('/');
-  await saveCheckpointScreenshot(page, testInfo, 'pure-sub-start');
+  await startPuzzleSession(page, testInfo, 'pure-sub-');
 
   for (let puzzleIndex = 0; puzzleIndex < 5; puzzleIndex++) {
     await expect(page.getByText(`Puzzle ${puzzleIndex + 1} of 5`)).toBeVisible();
@@ -411,9 +444,9 @@ test('real e2e: pure subtractive strategy is persisted', async ({ page, request 
       await clickCell(page, row, col);
     }
 
-    await expect(page.getByRole('button', { name: /Next Puzzle/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Continue/i })).toBeVisible();
     await saveCheckpointScreenshot(page, testInfo, `pure-sub-puzzle-${puzzleIndex + 1}-ready`);
-    await page.getByRole('button', { name: /Next Puzzle/i }).click();
+    await advanceFromCompletedPuzzle(page);
   }
 
   await expect(page.getByRole('heading', { name: 'All done!' })).toBeVisible();

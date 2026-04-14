@@ -34,10 +34,10 @@ const strategyLabel: Record<Strategy, string> = {
 };
 
 const stratColors: Record<Strategy, string> = {
-  'pure subtractive': '#1565c0',
-  'subtractive':      '#42a5f5',
-  'additive':         '#ef9a9a',
-  'pure additive':    '#c62828',
+  'pure subtractive': '#1b5e20',
+  'subtractive':      '#2e7d32',
+  'additive':         '#66bb6a',
+  'pure additive':    '#a5d6a7',
 };
 
 const Bar: React.FC<{ value: number; max: number; color: string }> = ({ value, max, color }) => (
@@ -46,6 +46,8 @@ const Bar: React.FC<{ value: number; max: number; color: string }> = ({ value, m
     <span className="bar-label">{value}</span>
   </div>
 );
+
+const puzzleStrategies: Strategy[] = ['pure subtractive', 'subtractive', 'additive', 'pure additive'];
 
 export const StatsPage: React.FC = () => {
   const [sessions, setSessions] = useState<SessionResults[]>([]);
@@ -105,12 +107,9 @@ export const StatsPage: React.FC = () => {
     };
   }).filter((x): x is PuzzleStat => x !== null);
 
-  const strategies: Strategy[] = ['pure subtractive', 'subtractive', 'additive', 'pure additive'];
-  const strategyTotals = strategies.reduce<Record<string, number>>((acc, s) => {
-    acc[s] = allPuzzleResults.filter(r => r.strategy === s).length;
-    return acc;
-  }, {});
-  const maxStratCount = Math.max(...Object.values(strategyTotals));
+  const maxPuzzleStrategyCount = Math.max(
+    ...perPuzzle.flatMap(p => puzzleStrategies.map(strategy => p.strategyCounts[strategy] ?? 0))
+  );
 
   return (
     <div className="stats-page">
@@ -163,16 +162,27 @@ export const StatsPage: React.FC = () => {
         </tbody>
       </table>
 
-      <h3>Strategy distribution (all puzzles, all sessions)</h3>
-      <div className="strategy-dist">
-        {strategies.map(s => (
-          <div key={s} className="strategy-row">
-            <div className="strategy-name">{strategyLabel[s]}</div>
-            <Bar value={strategyTotals[s]} max={maxStratCount} color={stratColors[s]} />
-            <div className="strategy-pct">
-              {allPuzzleResults.length ? pct((strategyTotals[s] / allPuzzleResults.length) * 100) : '—'}
+      <h3>Strategy distribution by puzzle</h3>
+      <div className="strategy-puzzle-grid">
+        {perPuzzle.map((p: PuzzleStat) => (
+          <section key={p.id} className="strategy-puzzle-card">
+            <div className="strategy-puzzle-header">
+              <h4>Puzzle {p.id}</h4>
+              <span>{p.n} run{p.n !== 1 ? 's' : ''}</span>
             </div>
-          </div>
+            <div className="strategy-dist">
+              {puzzleStrategies.map(strategy => {
+                const count = p.strategyCounts[strategy] ?? 0;
+                return (
+                  <div key={`${p.id}-${strategy}`} className="strategy-row">
+                    <div className="strategy-name">{strategyLabel[strategy]}</div>
+                    <Bar value={count} max={maxPuzzleStrategyCount} color={stratColors[strategy]} />
+                    <div className="strategy-pct">{pct((count / p.n) * 100)}</div>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
         ))}
       </div>
     </div>
