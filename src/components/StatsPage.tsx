@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { SessionResults, PuzzleResult } from '../types/index';
 import { puzzles } from '../data/puzzles';
 import './StatsPage.css';
@@ -54,13 +54,22 @@ export const StatsPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const fetchSessions = useCallback(() => {
     fetch('/api/sessions')
       .then(r => r.json())
-      .then(data => setSessions(data))
+      .then(data => {
+        setSessions(prev => data.length !== prev.length ? data : prev);
+        setError(null);
+      })
       .catch(() => setError('Failed to load sessions from server.'))
       .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    fetchSessions();
+    const interval = setInterval(fetchSessions, 10000);
+    return () => clearInterval(interval);
+  }, [fetchSessions]);
 
   if (loading) {
     return <div className="stats-page"><h2>Statistics</h2><p className="no-data">Loading…</p></div>;

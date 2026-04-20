@@ -13,6 +13,22 @@ const BUILD_DIR = path.join(__dirname, 'build');
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR);
 if (!fs.existsSync(SUBMISSIONS_FILE)) fs.writeFileSync(SUBMISSIONS_FILE, '[]');
 
+// Write queue: serializes read-modify-write cycles so concurrent POSTs
+// never clobber each other, while keeping all I/O async (non-blocking).
+let writing = Promise.resolve();
+
+function persistSession(session) {
+  writing = writing.then(() =>
+    fs.promises.readFile(SUBMISSIONS_FILE, 'utf8')
+      .then(raw => {
+        const sessions = JSON.parse(raw);
+        sessions.push(session);
+        return fs.promises.writeFile(SUBMISSIONS_FILE, JSON.stringify(sessions, null, 2));
+      })
+  );
+  return writing;
+}
+
 app.use(cors());
 app.use(express.json());
 
@@ -22,13 +38,9 @@ if (fs.existsSync(BUILD_DIR)) {
 }
 
 // POST /api/sessions — save a session result
-app.post('/api/sessions', (req, res) => {
+app.post('/api/sessions', async (req, res) => {
   try {
-    const session = req.body;
-    const raw = fs.readFileSync(SUBMISSIONS_FILE, 'utf8');
-    const sessions = JSON.parse(raw);
-    sessions.push(session);
-    fs.writeFileSync(SUBMISSIONS_FILE, JSON.stringify(sessions, null, 2));
+    await persistSession(req.body);
     res.status(201).json({ ok: true });
   } catch (err) {
     console.error('Failed to save session:', err);
@@ -36,10 +48,10 @@ app.post('/api/sessions', (req, res) => {
   }
 });
 
-// GET /api/sessions — retrieve all sessions
-app.get('/api/sessions', (req, res) => {
+// GET /api/sessions — always reads from disk for multi-instance consistency
+app.get('/api/sessions', async (req, res) => {
   try {
-    const raw = fs.readFileSync(SUBMISSIONS_FILE, 'utf8');
+    const raw = await fs.promises.readFile(SUBMISSIONS_FILE, 'utf8');
     res.json(JSON.parse(raw));
   } catch (err) {
     res.status(500).json({ error: 'Could not read submissions' });
