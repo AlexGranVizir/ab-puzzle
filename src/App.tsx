@@ -6,6 +6,7 @@ import './App.css';
 
 const DESIGNER_ENABLED = process.env.REACT_APP_DESIGNER === 'true';
 const IS_STATS = window.location.pathname === '/stats';
+const FOOTER_TEXT = 'Made by Claude for Gran Vizir';
 
 function App() {
   const [mode, setMode] = useState<'play' | 'design'>('play');
@@ -21,7 +22,7 @@ function App() {
           <StatsPage />
         </main>
         <footer className="app-footer">
-          <p>Made by Claude for Gran Vizir</p>
+          <p>{FOOTER_TEXT}</p>
         </footer>
       </div>
     );
@@ -45,7 +46,7 @@ function App() {
         {mode === 'play' || !DESIGNER_ENABLED ? <PuzzleFlow /> : <PuzzleDesigner />}
       </main>
       <footer className="app-footer">
-        <p>Made by Claude for Gran Vizir</p>
+        <p>{FOOTER_TEXT}</p>
       </footer>
     </div>
   );
